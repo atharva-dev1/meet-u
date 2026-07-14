@@ -25,8 +25,14 @@ export async function signup(req, res) {
       return res.status(400).json({ message: "Email already exists, please use a diffrent one" });
     }
 
-    const idx = Math.floor(Math.random() * 100) + 1; // generate a num between 1-100
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+    // Generate avatar using multiple fallback services
+    const generateAvatar = (fullName) => {
+      // Use UI Avatars as primary (reliable service)
+      const encodedName = encodeURIComponent(fullName);
+      return `https://ui-avatars.com/api/?name=${encodedName}&background=random&size=200&bold=true`;
+    };
+
+    const randomAvatar = generateAvatar(fullName);
 
     const newUser = await User.create({
       email,
