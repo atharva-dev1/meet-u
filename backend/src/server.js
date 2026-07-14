@@ -32,7 +32,12 @@ app.use("/api/chat", chatRoutes);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
+  // Handle client-side routing - serve index.html for all non-API routes
   app.get("*", (req, res) => {
+    // Don't interfere with API routes
+    if (req.path.startsWith("/api")) {
+      return res.status(404).json({ message: "API endpoint not found" });
+    }
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
